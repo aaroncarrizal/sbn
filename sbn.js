@@ -6,6 +6,8 @@
 
 // \s : matches any whitespace character (equal to [\r\n\t\f\v ])
 //  + : match previous condition for one and unlimited times
+/*  Recorre el código y va detectando todos los tokens
+    se crea un array de objetos para representarlos */
 function lexer (code) {
   var _tokens = code
                   .replace(/[\n\r]/g, ' *nl* ')
@@ -37,7 +39,7 @@ function lexer (code) {
   }
 
   if (tokens.length < 1) {
-    throw 'No Tokens Found. Try "Paper 10"'
+    throw 'No se encontraron tokens. Prueba con "Papel 10"'
   }
 
   return tokens
@@ -142,46 +144,46 @@ function parser (tokens) {
           }
           AST.body.push(expression)
           break
-        case 'Paper' :
+        case 'Papel' :
           if (paper) {
-            throw 'You can not define Paper more than once'
+            throw 'You can not define Papel more than once'
           }
           var expression = {
             type: 'CallExpression',
-            name: 'Paper',
+            name: 'Papel',
             arguments: []
           }
-          var args = findArguments('Paper', 1)
+          var args = findArguments('Papel', 1)
           expression.arguments = expression.arguments.concat(args)
           AST.body.push(expression)
           paper = true
           break
-        case 'Pen' :
+        case 'Lapiz' :
           var expression = {
             type: 'CallExpression',
-            name: 'Pen',
+            name: 'Lapiz',
             arguments: []
           }
-          var args = findArguments('Pen', 1)
+          var args = findArguments('Lapiz', 1)
           expression.arguments = expression.arguments.concat(args)
           AST.body.push(expression)
           pen = true
           break
-        case 'Line':
+        case 'Linea':
           if(!paper) {
-            // throw 'Please make Paper 1st'
+            // throw 'Please make Papel 1st'
             // TODO : no error message 'You should make paper first'
           }
           if(!pen) {
-            // throw 'Please define Pen 1st'
+            // throw 'Please define Lapiz 1st'
             // TODO : no error message 'You should set pen color first'
           }
           var expression = {
             type: 'CallExpression',
-            name: 'Line',
+            name: 'Linea',
             arguments: []
           }
-          var args = findArguments('Line', 4)
+          var args = findArguments('Linea', 4)
           expression.arguments = expression.arguments.concat(args)
           AST.body.push(expression)
           break
@@ -191,11 +193,11 @@ function parser (tokens) {
           if (args[0].type === 'dot') {
             AST.body.push({
               type: 'CallExpression',
-              name: 'Pen',
+              name: 'Lapiz',
               arguments:[args[1]]
             })
             obj.type = 'CallExpression',
-            obj.name = 'Line',
+            obj.name = 'Linea',
             obj.arguments = [
               { type: 'number', value: args[0].x},
               { type: 'number', value: args[0].y},
@@ -240,7 +242,7 @@ function transformer (ast) {
   }
 
   var elements = {
-    'Line' : function (param, pen_color_value) {
+    'Linea' : function (param, pen_color_value) {
       return {
         tag: 'line',
         attr: {
@@ -254,7 +256,7 @@ function transformer (ast) {
         body: []
       }
     },
-    'Paper' : function (param) {
+    'Papel' : function (param) {
       return {
         tag : 'rect',
         attr : {
@@ -289,7 +291,7 @@ function transformer (ast) {
   while (ast.body.length > 0) {
     var node = ast.body.shift()
     if(node.type === 'CallExpression' || node.type === 'VariableDeclaration') {
-      if(node.name === 'Pen') {
+      if(node.name === 'Lapiz') {
         current_pen_color = findParamValue(node.arguments[0])
       } else if (node.name === 'Set') {
         variables[node.identifier.value] = node.value.value
@@ -299,8 +301,8 @@ function transformer (ast) {
           throw node.name + ' is not a valid command.'
         }
         if (typeof !current_pen_color === 'undefined') {
-          // throw 'Please define Pen before drawing Line.'
-          // TODO : message 'You should define Pen before drawing Line'
+          // throw 'Please define Lapiz before drawing Linea.'
+          // TODO : message 'You should define Lapiz before drawing Linea'
         }
         newAST.body.push(el(node.arguments, current_pen_color))
       }
