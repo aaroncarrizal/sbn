@@ -71,7 +71,7 @@ function parser (tokens) {
         currentPosition++
         createDot(tokens.shift(), currentPosition, node)
       } else {
-        throw 'Expected ' + expectedType[currentPosition] + ' but found ' + current_token.type + '.'
+        throw 'Esperando ' + expectedType[currentPosition] + ' pero se encontró ' + current_token.type + '.'
       }
     }
     return node
@@ -83,16 +83,16 @@ function parser (tokens) {
     while (expectedLength > currentPosition) {
       var token = tokens.shift()
       if (!token) {
-        throw command + ' takes ' + expectedLength + ' argument(s). '
+        throw command + ' toma ' + expectedLength + ' argumento(s). '
       }
 
       if (expectedType){
         var expected = expectedTypeCheck(token.type, expectedType[currentPosition])
         if (!expected) {
-          throw command + ' takes ' + JSON.stringify(expectedType[currentPosition]) + ' as argument ' + (currentPosition + 1) + '. ' + (token ? 'Instead found a ' + token.type + ' '+ (token.value || '') + '.' : '')
+          throw command + ' toma ' + JSON.stringify(expectedType[currentPosition]) + ' como argumento ' + (currentPosition + 1) + '. ' + (token ? 'Pero se encontró a ' + token.type + ' '+ (token.value || '') + '.' : '')
         }
         if (token.type === 'number' && (token.value < 0 || token.value > 100)){
-          throw 'Found value ' + token.value + ' for ' + command + '. Value must be between 0 - 100.'
+          throw 'Valor encontrado ' + token.value + ' por ' + command + '. El valor debe estar entre 0 - 100.'
         }
       }
 
@@ -146,7 +146,7 @@ function parser (tokens) {
           break
         case 'Papel' :
           if (paper) {
-            throw 'You can not define Papel more than once'
+            throw 'No puedes definir Papel más de una vez'
           }
           var expression = {
             type: 'CallExpression',
@@ -214,10 +214,10 @@ function parser (tokens) {
           AST.body.push(obj)
           break
         default:
-          throw current_token.value + ' is not a valid command'
+          throw current_token.value + ' no es un comando válido'
       }
     } else if (['newline', 'ocb', 'ccb'].indexOf[current_token.type] < 0 ) {
-      throw 'Unexpected token type : ' + current_token.type
+      throw 'Token inesperado de tipo : ' + current_token.type
     }
   }
 
@@ -298,7 +298,7 @@ function transformer (ast) {
       } else {
         var el = elements[node.name]
         if (!el) {
-          throw node.name + ' is not a valid command.'
+          throw node.name + ' no es un comando válido.'
         }
         if (typeof !current_pen_color === 'undefined') {
           // throw 'Please define Lapiz before drawing Linea.'
